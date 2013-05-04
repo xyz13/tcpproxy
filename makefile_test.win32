@@ -1,0 +1,28 @@
+
+all: tcpproxytest
+CPP_FLAG=-I lib/jsoncpp/include -I lib/pthread/include
+LD_FLAG=-lws2_32 -L lib/pthread/lib/x86 -lpthreadGC2
+
+ALL_OBJ = logger.o tcpsocket.o selectloop.o test.o
+
+tcpproxytest: $(ALL_OBJ) pthreadGC2.dll
+	g++ $(ALL_OBJ) -o tcpproxytest $(LD_FLAG)
+
+pthreadGC2.dll:
+	cp lib/pthread/dll/x86/pthreadGC2.dll .
+
+test.o: test.cpp
+	g++ $(CPP_FLAG) -c test.cpp
+
+logger.o: logger.cpp logger.h    
+	g++ $(CPP_FLAG) -c logger.cpp
+
+tcpsocket.o: tcpsocket.cpp tcpsocket.h    
+	g++ $(CPP_FLAG) -c tcpsocket.cpp
+
+selectloop.o: selectloop.cpp selectloop.h    
+	g++ $(CPP_FLAG) -c selectloop.cpp
+  
+clean:
+	rm -fr $(ALL_OBJ) tcpproxytest.exe pthreadGC2.dll tcpproxytest.log.* \
+	    tcpproxytest.server.log* tcpproxytest.client.log*
