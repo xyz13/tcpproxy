@@ -1,33 +1,18 @@
 
-all: tcpproxy
 CC_FLAG=-bexpall -qlonglong -qlongdouble -q32 -qalign=full \
     -qkeyword=typename -qstaticinline
-CPP_FLAG=-I lib/jsoncpp/include $(CC_FLAG)
+CPP_FLAG=$(CC_FLAG)
 LD_FLAG=$(CC_FLAG) -lpthread 
 
-ALL_OBJ = json_value.o json_reader.o json_writer.o config.o tcpproxy.o logger.o \
-	tcpsocket.o selectloop.o main.o http.o
+ALL_OBJ = logger.o tcpsocket.o selectloop.o test.o
 
-tcpproxy: $(ALL_OBJ)
-	xlC_r $(ALL_OBJ) $(LD_FLAG) -o tcpproxy
+all: tcpproxytest
 
-json_value.o: 
-	xlC_r $(CPP_FLAG) -c lib/jsoncpp/src/json/json_value.cpp -o json_value.o
+tcpproxytest: $(ALL_OBJ) pthreadGC2.dll
+	xlC_r $(ALL_OBJ) -o tcpproxytest $(LD_FLAG)
 
-json_reader.o: 
-	xlC_r $(CPP_FLAG) -c lib/jsoncpp/src/json/json_reader.cpp -o json_reader.o
-
-json_writer.o: 
-	xlC_r $(CPP_FLAG) -c lib/jsoncpp/src/json/json_writer.cpp -o json_writer.o
-
-main.o: main.cpp
-	xlC_r $(CPP_FLAG) -c main.cpp
-
-config.o: config.cpp config.h
-	xlC_r $(CPP_FLAG) -c config.cpp
-
-tcpproxy.o: tcpproxy.cpp tcpproxy.h
-	xlC_r $(CPP_FLAG) -c tcpproxy.cpp
+test.o: test.cpp
+	xlC_r $(CPP_FLAG) -c test.cpp
 
 logger.o: logger.cpp logger.h    
 	xlC_r $(CPP_FLAG) -c logger.cpp
@@ -37,9 +22,7 @@ tcpsocket.o: tcpsocket.cpp tcpsocket.h
 
 selectloop.o: selectloop.cpp selectloop.h    
 	xlC_r $(CPP_FLAG) -c selectloop.cpp
-
-http.o: http.cpp http.h
-	xlC_r $(CPP_FLAG) -c http.cpp
-       
+  
 clean:
-	rm -fr $(ALL_OBJ) tcpproxy log/*
+	rm -fr $(ALL_OBJ) tcpproxytest tcpproxytest.log.* \
+	    tcpproxytest.server.log* tcpproxytest.client.log*

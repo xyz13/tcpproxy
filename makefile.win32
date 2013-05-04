@@ -1,25 +1,32 @@
 
-all: tcpproxy
-CPP_FLAG=-I lib/jsoncpp/include -I lib/pthread/include
-LD_FLAG=-lws2_32 -L lib/pthread/lib/x86 -lpthreadGC2
+JSON_INC_PATH=lib/jsoncpp/include
+JSON_SRC_PATH=lib/jsoncpp/src/json
+PTHREAD_INC_PATH=lib/pthread/include
+PTHREAD_LIB_PATH=lib/pthread/lib/x86
+PTHREAD_DLL_PATH=lib/pthread/dll/x86
+
+CPP_FLAG=-I $(JSON_INC_PATH) -I $(PTHREAD_INC_PATH)
+LD_FLAG=-lws2_32 -L $(PTHREAD_LIB_PATH) -lpthreadGC2
 
 ALL_OBJ = json_value.o json_reader.o json_writer.o config.o tcpproxy.o logger.o \
 	tcpsocket.o selectloop.o main.o http.o
+
+all: tcpproxy
 
 tcpproxy: $(ALL_OBJ) pthreadGC2.dll
 	g++ $(ALL_OBJ) -o tcpproxy $(LD_FLAG)
 
 pthreadGC2.dll:
-	cp lib/pthread/dll/x86/pthreadGC2.dll .
+	cp $(PTHREAD_DLL_PATH)/pthreadGC2.dll .
 
 json_value.o: 
-	g++ $(CPP_FLAG) -c lib/jsoncpp/src/json/json_value.cpp -o json_value.o
+	g++ $(CPP_FLAG) -c $(JSON_SRC_PATH)/json_value.cpp -o json_value.o
 
 json_reader.o: 
-	g++ $(CPP_FLAG) -c lib/jsoncpp/src/json/json_reader.cpp -o json_reader.o
+	g++ $(CPP_FLAG) -c $(JSON_SRC_PATH)/json_reader.cpp -o json_reader.o
 
 json_writer.o: 
-	g++ $(CPP_FLAG) -c lib/jsoncpp/src/json/json_writer.cpp -o json_writer.o
+	g++ $(CPP_FLAG) -c $(JSON_SRC_PATH)/json_writer.cpp -o json_writer.o
 
 main.o: main.cpp
 	g++ $(CPP_FLAG) -c main.cpp

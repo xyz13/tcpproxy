@@ -1,15 +1,20 @@
 
-all: tcpproxytest
-CPP_FLAG=-I lib/jsoncpp/include -I lib/pthread/include
-LD_FLAG=-lws2_32 -L lib/pthread/lib/x86 -lpthreadGC2
+PTHREAD_INC_PATH=lib/pthread/include
+PTHREAD_LIB_PATH=lib/pthread/lib/x86
+PTHREAD_DLL_PATH=lib/pthread/dll/x86
+
+CPP_FLAG=-I $(PTHREAD_INC_PATH)
+LD_FLAG=-lws2_32 -L $(PTHREAD_LIB_PATH) -lpthreadGC2
 
 ALL_OBJ = logger.o tcpsocket.o selectloop.o test.o
+
+all: tcpproxytest
 
 tcpproxytest: $(ALL_OBJ) pthreadGC2.dll
 	g++ $(ALL_OBJ) -o tcpproxytest $(LD_FLAG)
 
 pthreadGC2.dll:
-	cp lib/pthread/dll/x86/pthreadGC2.dll .
+	cp $(PTHREAD_DLL_PATH)/pthreadGC2.dll .
 
 test.o: test.cpp
 	g++ $(CPP_FLAG) -c test.cpp

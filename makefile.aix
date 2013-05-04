@@ -1,24 +1,28 @@
 
-all: tcpproxy
+JSON_INC_PATH=lib/jsoncpp/include
+JSON_SRC_PATH=lib/jsoncpp/src/json
+
 CC_FLAG=-bexpall -qlonglong -qlongdouble -q32 -qalign=full \
     -qkeyword=typename -qstaticinline
-CPP_FLAG=-I lib/jsoncpp/include $(CC_FLAG)
+CPP_FLAG=-I $(JSON_INC_PATH) $(CC_FLAG)
 LD_FLAG=$(CC_FLAG) -lpthread 
 
 ALL_OBJ = json_value.o json_reader.o json_writer.o config.o tcpproxy.o logger.o \
 	tcpsocket.o selectloop.o main.o http.o
 
+all: tcpproxy
+
 tcpproxy: $(ALL_OBJ)
 	xlC_r $(ALL_OBJ) $(LD_FLAG) -o tcpproxy
 
 json_value.o: 
-	xlC_r $(CPP_FLAG) -c lib/jsoncpp/src/json/json_value.cpp -o json_value.o
+	xlC_r $(CPP_FLAG) -c $(JSON_SRC_PATH)/json_value.cpp -o json_value.o
 
 json_reader.o: 
-	xlC_r $(CPP_FLAG) -c lib/jsoncpp/src/json/json_reader.cpp -o json_reader.o
+	xlC_r $(CPP_FLAG) -c $(JSON_SRC_PATH)/json_reader.cpp -o json_reader.o
 
 json_writer.o: 
-	xlC_r $(CPP_FLAG) -c lib/jsoncpp/src/json/json_writer.cpp -o json_writer.o
+	xlC_r $(CPP_FLAG) -c $(JSON_SRC_PATH)/json_writer.cpp -o json_writer.o
 
 main.o: main.cpp
 	xlC_r $(CPP_FLAG) -c main.cpp
